@@ -11,6 +11,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
 
+from app.data.seed_data import LISTINGS_SEED_DATA
+
 
 class InMemoryDatabase:
     """
@@ -25,6 +27,7 @@ class InMemoryDatabase:
         self._data = {
             "users": [],
             "sessions": [],
+            "listings": [],
             "data": {}
         }
         self._lock = threading.Lock()
@@ -44,6 +47,50 @@ class InMemoryDatabase:
         """Update timestamp for an existing record."""
         record["updated_at"] = datetime.utcnow().isoformat()
         return record
+    
+    def seed_listings(self):
+        """Seed the listings collection with sample data."""
+        with self._lock:
+            if "listings" not in self._data:
+                self._data["listings"] = []
+            
+            # Clear existing listings
+            self._data["listings"] = []
+            
+            # Add seed data with proper formatting
+            for listing_data in LISTINGS_SEED_DATA:
+                # Convert the listing data to match our schema
+                listing_record = {
+                    "id": str(listing_data["ID"]),  # Convert to string for consistency
+                    "listing_id": listing_data["ID"],
+                    "development_name": listing_data["DevelopmentName"],
+                    "post_town": listing_data["PostTown"],
+                    "shortened_post_code": listing_data["ShortenedPostCode"],
+                    "region": listing_data["Region"],
+                    "property_type": listing_data["PropertyType"],
+                    "bedrooms": listing_data["Bedrooms"],
+                    "bathrooms": listing_data["Bathrooms"],
+                    "size_sq_ft": listing_data["SizeSqFt"],
+                    "price_in_cents": listing_data["PriceInCents"],
+                    "minimum_deposit_in_cents": listing_data["MinimumDepositInCents"],
+                    "estimated_deposit_in_cents": listing_data["EstimatedDepositInCents"],
+                    "rental_income_in_cents": listing_data["RentalIncomeInCents"],
+                    "is_tenanted": listing_data["IsTenanted"],
+                    "is_cash_only": listing_data["IsCashOnly"],
+                    "description": listing_data["Description"],
+                    "photos": listing_data["Photos"],
+                    "is_featured": listing_data["IsFeatured"],
+                    "gross_yield": listing_data["GrossYield"],
+                    "has_user_requested_contact": listing_data["HasUserRequestedContact"],
+                    "has_user_saved_listing": listing_data["HasUserSavedListing"],
+                    "is_share_sale": listing_data["IsShareSale"],
+                    "is_getground_company": listing_data["IsGetgroundCompany"],
+                    "made_visible_at": listing_data["MadeVisibleAt"],
+                }
+                
+                # Add timestamps
+                listing_record = self._add_timestamp(listing_record)
+                self._data["listings"].append(listing_record)
     
     def get_all(self, collection: str) -> List[Dict[str, Any]]:
         """
@@ -211,6 +258,7 @@ class InMemoryDatabase:
             self._data = {
                 "users": [],
                 "sessions": [],
+                "listings": [],
                 "data": {}
             }
     

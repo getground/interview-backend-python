@@ -145,6 +145,101 @@ class SessionRecord(DatabaseRecord):
         }
 
 
+class Photo(BaseModel):
+    """
+    Photo model for listing images.
+    
+    Contains URLs for different image sizes and metadata.
+    """
+    original_url: str = Field(..., alias="OriginalURL", description="Original image URL")
+    standard_url: str = Field(..., alias="StandardURL", description="Standard size image URL")
+    thumbnail_url: str = Field(..., alias="ThumbnailURL", description="Thumbnail image URL")
+    mime_type: str = Field(..., alias="MimeType", description="Image MIME type")
+    
+    class Config:
+        """Pydantic configuration."""
+        allow_population_by_field_name = True
+        schema_extra = {
+            "example": {
+                "OriginalURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3",
+                "StandardURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3_standard",
+                "ThumbnailURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3_thumbnail",
+                "MimeType": "image/png"
+            }
+        }
+
+
+class ListingRecord(DatabaseRecord):
+    """
+    Property listing record model.
+    
+    Extends DatabaseRecord with property listing-specific fields.
+    """
+    listing_id: int = Field(..., alias="ID", description="Unique listing identifier")
+    development_name: Optional[str] = Field(None, alias="DevelopmentName", description="Development name")
+    post_town: str = Field(..., alias="PostTown", description="Post town")
+    shortened_post_code: str = Field(..., alias="ShortenedPostCode", description="Shortened post code")
+    region: str = Field(..., alias="Region", description="Region")
+    property_type: str = Field(..., alias="PropertyType", description="Property type")
+    bedrooms: int = Field(..., alias="Bedrooms", description="Number of bedrooms")
+    bathrooms: int = Field(..., alias="Bathrooms", description="Number of bathrooms")
+    size_sq_ft: int = Field(..., alias="SizeSqFt", description="Property size in square feet")
+    price_in_cents: int = Field(..., alias="PriceInCents", description="Property price in cents")
+    minimum_deposit_in_cents: int = Field(..., alias="MinimumDepositInCents", description="Minimum deposit in cents")
+    estimated_deposit_in_cents: int = Field(..., alias="EstimatedDepositInCents", description="Estimated deposit in cents")
+    rental_income_in_cents: int = Field(..., alias="RentalIncomeInCents", description="Rental income in cents")
+    is_tenanted: bool = Field(..., alias="IsTenanted", description="Whether property is tenanted")
+    is_cash_only: bool = Field(..., alias="IsCashOnly", description="Whether property is cash only")
+    description: str = Field(..., alias="Description", description="Property description")
+    photos: List[Photo] = Field(..., alias="Photos", description="Property photos")
+    is_featured: bool = Field(..., alias="IsFeatured", description="Whether listing is featured")
+    gross_yield: float = Field(..., alias="GrossYield", description="Gross yield percentage")
+    has_user_requested_contact: bool = Field(..., alias="HasUserRequestedContact", description="Whether user has requested contact")
+    has_user_saved_listing: bool = Field(..., alias="HasUserSavedListing", description="Whether user has saved listing")
+    is_share_sale: bool = Field(..., alias="IsShareSale", description="Whether it's a share sale")
+    is_getground_company: bool = Field(..., alias="IsGetgroundCompany", description="Whether it's a GetGround company")
+    made_visible_at: Optional[str] = Field(None, alias="MadeVisibleAt", description="ISO format visibility timestamp")
+    
+    class Config:
+        """Pydantic configuration."""
+        allow_population_by_field_name = True
+        schema_extra = {
+            "example": {
+                "ID": 187,
+                "DevelopmentName": None,
+                "PostTown": "London",
+                "ShortenedPostCode": "N17",
+                "Region": "South West",
+                "PropertyType": "apartment",
+                "Bedrooms": 1,
+                "Bathrooms": 1,
+                "SizeSqFt": 50,
+                "PriceInCents": 12500000,
+                "MinimumDepositInCents": 1000000,
+                "EstimatedDepositInCents": 3125000,
+                "RentalIncomeInCents": 110000,
+                "IsTenanted": True,
+                "IsCashOnly": False,
+                "Description": "property",
+                "Photos": [
+                    {
+                        "OriginalURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3",
+                        "StandardURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3_standard",
+                        "ThumbnailURL": "https://storage.googleapis.com/assets-terranova-qa-module-core/listings/1b2b53fd-398b-4129-8f7d-c5932f90b3c3_thumbnail",
+                        "MimeType": "image/png"
+                    }
+                ],
+                "IsFeatured": False,
+                "GrossYield": 0.1056,
+                "HasUserRequestedContact": False,
+                "HasUserSavedListing": False,
+                "IsShareSale": False,
+                "IsGetgroundCompany": False,
+                "MadeVisibleAt": None
+            }
+        }
+
+
 class CreateUserRequest(BaseModel):
     """
     Request model for creating a new user.
