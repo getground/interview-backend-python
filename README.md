@@ -56,10 +56,14 @@ python -m app.main
 
 ## 🌐 API Endpoints
 
-### Health Check Endpoints
-- `GET /api/ping` - Simple health check
-- `GET /api/health` - Detailed health check
-- `GET /` - Application information
+### Root Endpoints
+- `GET /` - Application information and available endpoints
+- `GET /health` - Simple health check for load balancers
+- `GET /favicon.ico` - Favicon handling
+
+### API Endpoints (prefixed with `/api`)
+- `GET /api/ping` - Quick health check
+- `GET /api/health` - Detailed health check with system information
 
 ### Documentation
 - `GET /docs` - Swagger UI documentation
@@ -103,7 +107,8 @@ interview-backend-python/
 │   │   ├── dependencies.py # API dependencies
 │   │   └── routes/        # API route definitions
 │   │       ├── __init__.py
-│   │       └── ping.py    # Ping endpoint
+│   │       ├── ping.py    # Health check endpoints
+│   │       └── root.py    # Root-level endpoints
 │   ├── models/            # Data models
 │   │   ├── __init__.py
 │   │   └── schemas.py     # Pydantic schemas
@@ -187,7 +192,7 @@ Once the server is running, you can access:
 
 ## 🧪 Example API Calls
 
-### Health Check
+### Quick Health Check
 ```bash
 curl http://localhost:3001/api/ping
 ```
@@ -196,6 +201,31 @@ Expected response:
 ```json
 {
   "message": "pong",
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+### Simple Health Check
+```bash
+curl http://localhost:3001/health
+```
+
+Expected response:
+```json
+{
+  "status": "ok"
+}
+```
+
+### Detailed Health Check
+```bash
+curl http://localhost:3001/api/health
+```
+
+Expected response:
+```json
+{
+  "message": "healthy",
   "timestamp": "2024-01-01T00:00:00Z"
 }
 ```
@@ -225,9 +255,9 @@ Expected response:
 
 ### Adding New Endpoints
 
-1. Create a new route file in `app/api/routes/`
-2. Define your endpoint with proper documentation
-3. Include the router in `app/main.py`
+1. Create a new route file in `app/api/routes/` (for API endpoints) or add to `app/api/routes/root.py` (for root endpoints)
+2. Define your endpoint with proper FastAPI router syntax and documentation
+3. Include the router in `app/main.py` with appropriate prefix (use `/api` prefix for API endpoints)
 4. Add tests in `tests/`
 
 ### Adding New Models

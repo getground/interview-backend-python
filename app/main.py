@@ -17,7 +17,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config.settings import get_settings
-from .api.routes import ping
+from .api.routes import ping, root
 from .utils.helpers import create_error_response
 
 
@@ -79,6 +79,12 @@ def create_app() -> FastAPI:
         tags=["API"]
     )
     
+    # Include root router (no prefix for root endpoints)
+    app.include_router(
+        root.router,
+        tags=["Root"]
+    )
+    
     # Add exception handlers
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -121,52 +127,8 @@ def create_app() -> FastAPI:
 app = create_app()
 
 
-@app.get("/")
-async def root():
-    """
-    Root endpoint.
-    
-    Returns basic application information and available endpoints.
-    
-    Returns:
-        dict: Application information and links
-    """
-    settings = get_settings()
-    
-    return {
-        "app_name": settings.app_name,
-        "version": settings.app_version,
-        "description": settings.app_description,
-        "environment": settings.environment,
-        "docs_url": settings.docs_url,
-        "redoc_url": settings.redoc_url,
-        "api_prefix": settings.api_prefix,
-        "endpoints": {
-            "health_check": f"{settings.api_prefix}/ping",
-            "detailed_health": f"{settings.api_prefix}/health",
-            "documentation": settings.docs_url,
-            "redoc": settings.redoc_url
-        }
-    }
 
 
-@app.get("/favicon.ico")
-async def favicon():
-    """
-    Favicon endpoint.
-    
-    Returns a simple favicon response to prevent 404 errors.
-    """
-    return {"message": "No favicon configured"}
-
-
-@app.get("/health", tags=["Health"])
-async def root_health():
-    """
-    Root-level health check endpoint for load balancers and uptime checks.
-    Returns a simple status message and 200 OK.
-    """
-    return {"status": "ok"}
 
 
 if __name__ == "__main__":
