@@ -10,7 +10,7 @@ This module contains all application configuration settings including:
 
 import os
 from typing import List, Optional
-from pydantic import validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     # Database settings (for future use)
     database_url: Optional[str] = None
     
-    @validator("environment")
+    @field_validator("environment")
     def validate_environment(cls, v: str) -> str:
         """Validate environment setting."""
         allowed_environments = ["development", "production", "testing"]
@@ -57,7 +57,7 @@ class Settings(BaseSettings):
             raise ValueError(f"Environment must be one of {allowed_environments}")
         return v
     
-    @validator("port")
+    @field_validator("port")
     def validate_port(cls, v: int) -> int:
         """Validate port number."""
         if not 1 <= v <= 65535:

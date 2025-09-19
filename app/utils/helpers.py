@@ -21,7 +21,8 @@ def format_timestamp(dt: Optional[datetime] = None) -> str:
         ISO format timestamp string
     """
     if dt is None:
-        dt = datetime.utcnow()
+        from datetime import timezone
+        dt = datetime.now(timezone.utc)
     return dt.isoformat()
 
 
